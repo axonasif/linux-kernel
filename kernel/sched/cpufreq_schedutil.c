@@ -186,9 +186,6 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
 
 static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
 {
-#ifdef CONFIG_SCHED_PDS
-	return sg_cpu->max;
-#else
 	struct rq *rq = cpu_rq(sg_cpu->cpu);
 
 	if (rq->rt.rt_nr_running)
@@ -204,7 +201,7 @@ static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
 	 * util_cfs + util_dl as requested freq. However, cpufreq is not yet
 	 * ready for such an interface. So, we only do the latter for now.
 	 */
-	return min(sg_cpu->max, (sg_cpu->util_dl + sg_cpu->util_cfs));
+	return min(util, sg_cpu->max);
 }
 
 static void sugov_set_iowait_boost(struct sugov_cpu *sg_cpu, u64 time, unsigned int flags)
